@@ -1,0 +1,52 @@
+import requests
+from IPython.display import Image, display, HTML;
+
+
+# NASA API key (provided)
+API_KEY = "1SmBjyIjY4lRi9JTvlJBrmqsgcJRLsrW2W6WqlJx"
+
+
+# NASA APOD API endpoint
+APOD_URL = "https://api.nasa.gov/planetary/apod"
+
+
+# Parameters for the API call.
+# You can change the "date" variable to any valid YYYY-MM-DD format date to see that day's image.
+# If you leave out the date parameter, the API returns the latest APOD.
+params = {
+   "api_key": API_KEY,
+   "date": "2023-12-25"  # Uncomment and set your desired date (e.g., Christmas 2023)
+}
+
+
+# Fetch the APOD data from NASA
+response = requests.get(APOD_URL, params=params)
+response.raise_for_status()  # Check for any errors
+data = response.json()
+
+
+# Extract relevant information from the response
+title = data.get("title", "No Title")
+date = data.get("date", "No Date")
+explanation = data.get("explanation", "No Explanation provided.")
+media_type = data.get("media_type", "image")  # Typically "image", but sometimes "video"
+media_url = data.get("url", "")
+
+
+# Print the title, date, and explanation
+print(f"Title: {title}")
+print(f"Date: {date}\n")
+print(explanation)
+
+
+# Display the media (image or video) based on the media type
+if media_type == "image":
+   print("\nDisplaying the image:")
+   display(Image(url=media_url))
+elif media_type == "video":
+   print("\nDisplaying the video:")
+   # For videos, embed them using an HTML iframe
+   display(HTML(f'<iframe width="560" height="315" src="{media_url}" frameborder="0" allowfullscreen></iframe>'))
+else:
+   print("\nMedia type is not recognized.")
+
